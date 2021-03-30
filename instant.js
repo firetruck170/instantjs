@@ -4,6 +4,7 @@ var ctx = c.getContext("2d");
 var imported = document.createElement("script");
 var offX = 0;
 var offY = 0;
+var unmoving = false;
 imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
 document.head.appendChild(imported);
 var gameBlocks = [];
@@ -509,10 +510,18 @@ function Block(sprite, x, y, w, h){
     gameBlocks.push(this);
 }
 
-function Character(sprite, x, y, w, h){
+function Character(sprite, x, y, w, h, camx, camy){
     this.x = x;
     this.sx = x;
-    this.cam = true;
+    this.sy = y;
+    this.camx = camx;
+    this.camy = camy;
+    if(camx == null){
+        camx = false;
+    }
+    if(camy == null){
+        camy = false;
+    }
     this.y = y;
     this.lx = x;
     this.ly = y;
@@ -533,40 +542,56 @@ function Character(sprite, x, y, w, h){
         }
     }
     this.move = function(x, y){
-        for(i = 0; i < gameBlocks.length; i++){
-            gameBlocks[i].collidesWith(this);
-        }
         let s1 = this.x;
         let s2 = this.y;
         this.x += x;
         this.y += y;
         if(x > 0){
             this.lx = 0;
+            unmoving = false;
         } else if(x < 0){
             this.lx = 600;
+            unmoving = false;
         }
         if(y > 0){
             this.ly = 0;
+            unmoving = false;
         } else if(y < 0){
             this.ly = 600;
+            unmoving = false;
         }
         if(s1 != this.x && !this.onPlat){
-            if(this.cam){
+            if(this.camx){
                 ctx.translate(-x, 0);
-                let off = offX;
                 offX += x;
-                if(off == offX){
-                    ctx.transalte(x, 0);
+                if(offX != this.x - this.sx && !unmoving){
+                    offX = this.x - this.sx;
+                    ctx.translate(x, 0);
+                    unmoving = true;
+                    //return;
+                } else{
+                    unmoving = false;
                 }
-                //this.x = this.sx + offX;
-            }
-            if(offX != this.x - this.sx){
-                offX = this.x;
+                if(unmoving){
+                    unmoving = false;
+                }
             }
         }
-        if(s2 >= this.y + 5 && s2 <= this.y - 5){
-            if(this.cam && !this.onPlat){
+        if(s2 != this.y && !this.onPlat){
+            if(this.camy){
                 ctx.translate(0, -y);
+                offY += y;
+                if(offY != this.y - this.sy && !unmoving){
+                    offY = this.y - this.sy;
+                    ctx.translate(0, y);
+                    unmoving = true;
+                    //return;
+                } else{
+                    unmoving = false;
+                }
+                if(unmoving){
+                    unmoving = false;
+                }
             }
         }
     }
