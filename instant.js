@@ -151,10 +151,24 @@ function Text(x, y, size, font, text, color){
     conLog("Text");
 }
 
-function Tool(init, operations, tick){
-    this.init = init;
-    this.calculations = operations;
-    this.tick = tick;
+function tool(source){
+    let src = document.createElement("script");
+    src.src = source;
+    document.head.appendChild(src);
+}
+
+function scale(x, y){
+    c.width *= x;
+    c.height *= y;
+    ctx.scale(x, y);
+}
+
+function screenScale(){
+    if(document.documentElement.clientWidth > document.documentElement.clientHeight){
+        scale(document.documentElement.clientHeight / 400 / 1.5 * 1.2, document.documentElement.clientHeight / 300 / 2 * 1.2);
+    } else{
+        scale(document.documentElement.clientWidth / 400 / 2.9 * 1.2, document.documentElement.clientWidth / 300 / 2.9 * 1.2);
+    }
 }
 
 function render(sprite, xe, ye, w, h){
