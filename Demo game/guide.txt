@@ -1,0 +1,6 @@
+Guide:
+1. Download all files for the game.
+2. Put them all in the same directory.
+3. Download instantjs.
+4. Put instant.js in the same directory.
+5. Run the HTML file.
