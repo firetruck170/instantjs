@@ -25,6 +25,16 @@ window.addEventListener("touchmove", function(e){
 
 //swal("InstantJS", "Made with InstantJS", "info");
 
+function extend(object, code){
+    object.extension = code;
+}
+
+function isTouchDevice() {
+  return (('ontouchstart' in window) ||
+     (navigator.maxTouchPoints > 0) ||
+     (navigator.msMaxTouchPoints > 0));
+}
+
 var paintbrush = {
     c: document.getElementById("c"),
     ctx: this.c.getContext("2d"),
@@ -294,13 +304,20 @@ function handleMouseDown(){
     });
 }
 
-function Tilemap(map){
+function Tilemap(map, xmap, ymap, key){
     this.map = map;
+    this.xmap = xmap;
+    this.ymap = ymap;
     this.result = [];
+    this.key = key;
     this.init = function(){
         for(i = 0; i < this.map.length; i++){
-            this.result.push(this.map[i]);
-            this.result[this.result.length - 1].render();
+            if(map[i] != 0){
+                this.result.push(this.key[map[i]]);
+                this.result.x = this.xmap[i];
+                this.result.y = this.ymap[i];
+                return this.result;
+            }
         }
     }
     this.render = function(){
