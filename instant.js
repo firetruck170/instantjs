@@ -609,6 +609,12 @@ function Character(sprite, x, y, w, h, camx, camy){
             }
         }
     }
+    this.bounce = function(x, y){
+        let nx = -x;
+        let ny = -y;
+        let n = [nx, ny];
+        return n;
+    }
     this.collidesWith = function(body){
     	if(this.x + this.w >= body.x && this.x + this.w <= body.x + body.w && this.y + this.h >= body.y && this.y + this.h <= body.y + body.h || this.x + this.w >= body.x && this.x + this.w <= body.x + body.w && this.y >= body.y && this.y <= body.y + body.h){
     		return true;
