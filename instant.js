@@ -6,18 +6,21 @@ var offX = 0;
 var offY = 0;
 var mouseX;
 var mouseY;
+var scaleX;
+var scaleY;
+var mousestate = false;
 var unmoving = false;
 imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
 document.head.appendChild(imported);
 var gameBlocks = [];
 
 window.addEventListener("mousemove", function(e){
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    mouseX = e.clientX - parseInt(window.getComputedStyle(c, null).paddingLeft) * scaleX;
+    mouseY = e.clientY - parseInt(window.getComputedStyle(c, null).paddingTop) * scaleY;
 });
 window.addEventListener("touchmove", function(e){
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    mouseX = e.clientX - parseInt(window.getComputedStyle(c, null).paddingLeft) * scaleX;
+    mouseY = e.clientY - parseInt(window.getComputedStyle(c, null).paddingTop) * scaleY;
 });
 
 //swal("InstantJS", "Made with InstantJS", "info");
@@ -172,6 +175,8 @@ function scale(x, y){
     c.width *= x;
     c.height *= y;
     ctx.scale(x, y);
+    scaleX = x;
+    scaleY = y;
 }
 
 function screenScale(){
@@ -274,12 +279,18 @@ function handleClick(result){
     });
 }
 
-function handleMouseDown(result){
-    window.addEventListener(`mousedown`, function(e){
-        result();
+function handleMouseDown(){
+    window.addEventListener("mousedown", function(){
+        mousestate = true;
     });
-    window.addEventListener(`touchstart`, function(e){
-        result();
+    window.addEventListener("touchstart", function(){
+        mousestate = true;
+    });
+    window.addEventListener("mouseup", function(){
+        mousestate = false;
+    });
+    window.addEventListener("touchend", function(){
+        mousestate = false;
     });
 }
 
@@ -331,6 +342,12 @@ function TilemapUnstable(map, key, sprites, w, h){
             this.generatedMap[a].render();
         }
     }
+}
+
+function imgDraw(img, x, y, w, h){
+    let imagen = new Image();
+    imagen.src = img;
+    ctx.drawImage(imagen, x, y, w, h);
 }
 
 function Particles(num, x, y, playing, size, xv, yv, color, lf){
