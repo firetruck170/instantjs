@@ -4,10 +4,21 @@ var ctx = c.getContext("2d");
 var imported = document.createElement("script");
 var offX = 0;
 var offY = 0;
+var mouseX;
+var mouseY;
 var unmoving = false;
 imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
 document.head.appendChild(imported);
 var gameBlocks = [];
+
+window.addEventListener("mousemove", function(e){
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+window.addEventListener("touchmove", function(e){
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
 
 //swal("InstantJS", "Made with InstantJS", "info");
 
@@ -254,48 +265,21 @@ function handleInputDown(input, result){
     });
 }
 
-function handleThree(input, result, inp, res, inpu, resu){
-    window.addEventListener(`keypress`, function(e){
-        if(e.key.toLowerCase() == input){
-            result();
-            conLog("Key input!");
-        }
+function handleClick(result){
+    window.addEventListener(`click`, function(e){
+        result();
     });
-    window.addEventListener(`keydown`, function(ev){
-        if(ev.key.toLowerCase() == inp){
-            res();
-            conLog("Key input!");
-        }
-    });
-    window.addEventListener(`keydown`, function(eve){
-        if(eve.key.toLowerCase() == inpu){
-            resu();
-            conLog("Key input!");
-        }
+    window.addEventListener(`touchend`, function(e){
+        result();
     });
 }
 
-function handleTwo(input, result, inp, res){
-    window.addEventListener(`keydown`, function(e){
-        if(e.key.toLowerCase() == input){
-            result();
-            conLog("Key input!");
-        }
+function handleMouseDown(result){
+    window.addEventListener(`mousedown`, function(e){
+        result();
     });
-    window.addEventListener(`keypress`, function(e){
-        if(e.key.toLowerCase() == inp){
-            res();
-            conLog("Key input!");
-        }
-    });
-}
-
-function handleInputTap(input, result){
-    window.addEventListener(`keypress`, function(e){
-        if(e.key.toLowerCase() == input){
-            result();
-            conLog("Key input!");
-        }
+    window.addEventListener(`touchstart`, function(e){
+        result();
     });
 }
 
