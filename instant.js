@@ -29,6 +29,10 @@ function extend(object, code){
     object.extension = code;
 }
 
+function callAfter(call, fps){
+    window.setTimeout(call, fps);
+}
+
 function isTouchDevice() {
   return (('ontouchstart' in window) ||
      (navigator.maxTouchPoints > 0) ||
@@ -195,7 +199,6 @@ function screenScale(){
     } else{
         scale(document.documentElement.clientWidth / 400 / 2.9 * 1.2, document.documentElement.clientWidth / 300 / 2.9 * 1.2);
     }
-    //paintbrush.rect("black", -1111111111111111111, -11111111111111111111111111, 5555555555555555555555555, 55555656565656565656656565656);
 }
 
 function render(sprite, xe, ye, w, h){
