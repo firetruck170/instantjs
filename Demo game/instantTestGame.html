@@ -4,7 +4,6 @@
         <title>InstantTestGame</title>
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="darkblue">
-
         <style>
             body{
                 background-color: darkblue;
@@ -19,9 +18,9 @@
         <script src="instant.js"></script>
         <script>
             screenScale();
-            var player = new Character("char1.png", 320, 240, 50, 50, true, false);
+            var player = new Character("spikerun/resources/char1.png", 320, 240, 50, 50, true, false);
             var goal = new Character("graph.png", 2400, 200, 50, 50);
-            var floor = new Block("graph.png", -11110033333330000, 420, 11111111111111113331640, 3360);
+            var floor = new Block("graph.png", -1111000000, 420, 11111111111111111640, 360);
             var cratesX = [100, 300, 500, 700, 900, 1500, 1600, 1700, 2400];
             var plat = false;
             var enGrav = 0;
@@ -40,7 +39,7 @@
                     crates.push(new Block("crate.jpg", cratesX[i], cratesY[i], 70, 70));
                 }
                 for(i = 0; i < enemiesX.length; i++){
-                    enemies.push(new Character("spike.png", enemiesX[i], enemiesY[i], 30, 30, false, false));
+                    enemies.push(new Character("spikerun/resources/spike.png", enemiesX[i], enemiesY[i], 30, 30, false, false));
                 }
                 initiated = true;
             }
@@ -70,14 +69,13 @@
                 }
                 gravity += 2;
                 enGrav += 2;
-                ctx.fillStyle = "cyan";
-                ctx.fillRect(-111000000, -111110000000, c.width * 100000000000000000000, c.height * 10000000000000000000000);
+                paintbrush.rect("cyan", -111000000, -111110000000, c.width * 100000000000000000000 + 1000000000000000000000, c.height * 10000000000000000000000 + 100000000000000);
                 floor.render();
                 player.render();
                 if(isTouchDevice()){
-                    imgDraw("life.png", 70 + offX, 370 + offY, 50, 50);
-                    imgDraw("life.png", 10 + offX, 430 + offY, 50, 50);
-                    imgDraw("life.png", 130 + offX, 430 + offY, 50, 50);
+                    imgDraw("spikerun/resources/life.png", 70 + offX, 370 + offY, 50, 50);
+                    imgDraw("spikerun/resources/life.png", 10 + offX, 430 + offY, 50, 50);
+                    imgDraw("spikerun/resources/life.png", 130 + offX, 430 + offY, 50, 50);
                 }
                 goal.render();
                 if(goal.collidesWith(player)){
@@ -153,7 +151,7 @@
                         x += 7;
                     }
                 }
-                window.setTimeout("gameloop()", 50);
+                callAfter("gameloop()", 50);
             }
             handleInputDown("w", function(){
                 if(plat){
