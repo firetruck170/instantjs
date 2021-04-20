@@ -11,4 +11,5 @@ Unlike other JavaScript game engines, InstantJS has all the building blocks you'
 - Rendering power. With simple canvas rendering, the engine quickly renders sharp, great looking images and graphics. The rendering is instant, so no more graphics running behind after calculations!
 ## How can I download it?
 Just download the instant.js file and include it in your code. To include, put this in the head of your HTML file:
+
 `<script src="path to instant.js file"></script>`
