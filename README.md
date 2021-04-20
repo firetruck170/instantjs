@@ -13,6 +13,7 @@ Unlike other JavaScript game engines, InstantJS has all the building blocks you'
 Just download the instant.js file and include it in your code. To include, put this in the head of your HTML file:
 
 `<script src="path to instant.js file"></script>`
+
 ***To download it:***
 1. Click on the instant.js file above in the file viewer.
 2. Right-click the "Raw" button at the top-right of the code viewer.
