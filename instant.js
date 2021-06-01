@@ -6,8 +6,8 @@ var offX = 0;
 var offY = 0;
 var mouseX;
 var mouseY;
-var scaleX;
-var scaleY;
+var scaleX = 1;
+var scaleY = 1;
 var mousestate = false;
 var unmoving = false;
 imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
@@ -17,6 +17,7 @@ var gameBlocks = [];
 window.addEventListener("mousemove", function(e){
     mouseX = e.clientX - parseInt(window.getComputedStyle(c, null).paddingLeft) * scaleX;
     mouseY = e.clientY - parseInt(window.getComputedStyle(c, null).paddingTop) * scaleY;
+    console.log(e.clientY + ":" + mouseY);
 });
 window.addEventListener("touchmove", function(e){
     mouseX = e.clientX - parseInt(window.getComputedStyle(c, null).paddingLeft) * scaleX;
@@ -201,6 +202,7 @@ function screenScale(){
     }
 }
 
+//Testing only--DO NOT USE!
 function render(sprite, xe, ye, w, h){
     let y = ye;
     let x = xe;
@@ -284,6 +286,28 @@ function handleInputDown(input, result){
     });
 }
 
+function handle2InputsDown(inputA, inputB, resultA, resultB){
+    window.addEventListener(`keydown`, function(e){
+        if(e.key.toLowerCase() == inputA){
+            resultA();
+            conLog("Key input!");
+        }
+        if(e.key.toLowerCase() == inputB){
+            resultB();
+            conLog("Key input!");
+        }
+    });
+}
+
+function handleInputTap(input, result){
+    window.addEventListener(`keyup`, function(e){
+        if(e.key.toLowerCase() == input){
+            result();
+            conLog("Key input!");
+        }
+    });
+}
+
 function handleClick(result){
     window.addEventListener(`click`, function(e){
         result();
@@ -308,27 +332,22 @@ function handleMouseDown(){
     });
 }
 
-function Tilemap(map, xmap, ymap, key){
+function Tilemap(map, key, size){
     this.map = map;
-    this.xmap = xmap;
-    this.ymap = ymap;
     this.result = [];
     this.key = key;
     this.init = function(){
         for(i = 0; i < this.map.length; i++){
-            if(map[i] != 0){
-                this.result.push(this.key[map[i]]);
-                this.result.x = this.xmap[i];
-                this.result.y = this.ymap[i];
-                return this.result;
+            for(e = 0; e < this.map[i].length; e++){
+                if(this.map[i][e] != 0){
+                    this.result.push(this.key);
+                    this.result[this.result.length - 1].x = (e * size) - size;
+                    this.result[this.result.length - 1].y = (i * size) - size;
+                    continue;
+                }
             }
         }
-    }
-    this.render = function(){
-        for(i = 0; i < this.result.length; i++){
-            this.result[i].render();
-            this.result[i].collidesWith(player);
-        }
+        return this.result;
     }
 }
 
@@ -453,6 +472,7 @@ function SaveFile(name, data, visibility){
         this.data = localStorage.getItem(this.name);
         variable = this.data;
         this.log = new StorageNode([this.data], {log: this.data}, this.data);
+        return this.data;
     };
     this.recover = function(v1, v2, v3){
         v1 = this.log.array;
@@ -546,6 +566,169 @@ function Block(sprite, x, y, w, h){
     gameBlocks.push(this);
 }
 
+function PhysicsBody(sprite, x, y, w, h, camx, camy, grav, mass, mode){
+    this.x = x;
+    this.sx = x;
+    this.sy = y;
+    this.camx = camx;
+    this.camy = camy;
+    if(camx == null){
+        camx = false;
+    }
+    if(camy == null){
+        camy = false;
+    }
+    this.y = y;
+    this.lx = x;
+    this.ly = y;
+    this.w = w;
+    this.h = h;
+    this.mass = mass;
+    this.grav = grav;
+    this.onPlat = false;
+    this.img = true;
+    this.sprite = sprite;
+    this.mode = mode;
+    this.velX = 0;
+    this.velY = 0;
+    if(this.img){
+        this.sprite = new Image();
+    }
+    this.sprite.src = sprite;
+    this.render = function(){
+        if(!this.img){
+            render(this.sprite, this.x, this.y, this.w, this.h);
+        } else{
+            ctx.drawImage(this.sprite, this.x, this.y, this.w, this.h);
+        }
+    }
+    this.updatePhysics = function(){
+        if(this.onPlat == false){
+            this.velY += this.grav;
+        }
+        if(this.velX > 0){
+            this.velX -= this.mass;
+        }
+        if(this.velX < 0){
+            this.velX += this.mass;
+        }
+        if(this.velX > 0){
+            this.velX -= 1;
+        }
+        if(this.velX < 0){
+            this.velX += 1;
+        }
+        this.move(this.velX, this.velY);
+    }
+    this.applyForce = function(fX, fY){
+        this.velX += fX;
+        this.velY += fY;
+    }
+    this.move = function(x, y){
+        let s1 = this.x;
+        let s2 = this.y;
+        this.x += x;
+        this.y += y;
+        if(x > 0){
+            this.lx = 0;
+            unmoving = false;
+        } else if(x < 0){
+            this.lx = 600;
+            unmoving = false;
+        }
+        if(y > 0){
+            this.ly = 0;
+            unmoving = false;
+        } else if(y < 0){
+            this.ly = 600;
+            unmoving = false;
+        }
+        if(s1 != this.x && !this.onPlat){
+            if(this.camx){
+                ctx.translate(-x, 0);
+                offX += x;
+                if(offX != this.x - this.sx && !unmoving){
+                    offX = this.x - this.sx;
+                    ctx.translate(x, 0);
+                    unmoving = true;
+                    //return;
+                } else{
+                    unmoving = false;
+                }
+                if(unmoving){
+                    unmoving = false;
+                }
+            }
+        }
+        if(s2 != this.y && !this.onPlat){
+            if(this.camy){
+                ctx.translate(0, -y);
+                offY += y;
+                if(offY != this.y - this.sy && !unmoving){
+                    offY = this.y - this.sy;
+                    ctx.translate(0, y);
+                    unmoving = true;
+                    //return;
+                } else{
+                    unmoving = false;
+                }
+                if(unmoving){
+                    unmoving = false;
+                }
+            }
+        }
+    }
+    this.bounce = function(){
+        let nx = -this.velX;
+        let ny = -this.velY;
+        if(this.mode == "b"){
+            nx = -this.velX;
+            ny = -this.velY;
+        }
+        if(this.mode == "n"){
+            if(this.velX > 0){
+                nx = -this.velX + (this.mass * 2);
+            } else{
+                nx = -this.velX - (this.mass * 2);
+            }
+            if(this.velY > 0){
+                ny = -this.velY + (this.mass * 2);
+            } else{
+                ny = -this.velY - (this.mass * 2);
+            }
+        }
+        if(this.mode == "s"){
+            nx = 0;
+            ny = 0;
+        }
+        let n = [nx, ny];
+        return n;
+    }
+    this.bounceR = function(x, y, r){
+        let nx = -x + Math.random() * r - (r / 1.9);
+        let ny = -y + Math.random() * r - (r / 1.9);
+        let n = [nx, ny];
+        return n;
+    }
+    this.collidesWith = function(body){
+    	if(this.x + this.w >= body.x && this.x + this.w <= body.x + body.w && this.y + this.h >= body.y && this.y + this.h <= body.y + body.h || this.x + this.w >= body.x && this.x + this.w <= body.x + body.w && this.y >= body.y && this.y <= body.y + body.h){
+    		return true;
+    	} else if(this.x >= body.x && this.x <= body.x + body.w && this.y >= body.y && this.y <= body.y + body.h || this.x >= body.x && this.x <= body.x + body.w && this.y + this.h >= body.y && this.y + this.h <= body.y + body.h){
+    		return true;
+    	} else if(body.x > this.x && body.x + body.w < this.x + this.w && body.y > this.y && body.y + body.h < this.y + this.h){
+    		return true;
+    	} else if(body.x < this.x + this.w && body.x + body.w > this.x + this.w && body.y > this.y && body.y + body.h < this.y + this.h){
+    		return true;
+    	} else if(body.x > this.x && body.x + body.w < this.x + this.w && body.y < this.y && body.y + body.h > this.y){
+    		return true;
+    	} else if(this.x < body.x && this.x + this.w > body.x + body.w && this.y + this.h > body.y && this.y + this.h < body.y + body.h){
+    		return true;
+    	} else{
+    		return false;
+    	}
+    }
+}
+
 function Character(sprite, x, y, w, h, camx, camy){
     this.x = x;
     this.sx = x;
@@ -634,6 +817,12 @@ function Character(sprite, x, y, w, h, camx, camy){
     this.bounce = function(x, y){
         let nx = -x;
         let ny = -y;
+        let n = [nx, ny];
+        return n;
+    }
+    this.bounceR = function(x, y, r){
+        let nx = -x + Math.random() * r - (r / 1.9);
+        let ny = -y + Math.random() * r - (r / 1.9);
         let n = [nx, ny];
         return n;
     }
