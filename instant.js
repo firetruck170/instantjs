@@ -332,23 +332,16 @@ function handleMouseDown(){
     });
 }
 
-function Tilemap(map, key, size){
-    this.map = map;
-    this.result = [];
-    this.key = key;
-    this.init = function(){
-        for(i = 0; i < this.map.length; i++){
-            for(e = 0; e < this.map[i].length; e++){
-                if(this.map[i][e] != 0){
-                    this.result.push(this.key);
-                    this.result[this.result.length - 1].x = (e * size) - size;
-                    this.result[this.result.length - 1].y = (i * size) - size;
-                    continue;
-                }
+function blockTilemap(map, size, sprite){
+    let result = [];
+    for(i = 0; i < map.length; i++){
+        for(e = 0; e < map[i].length; e++){
+            if(map[i][e] == 1){
+                result.push(new Block(sprite, e * size, i * size, size, size));
             }
         }
-        return this.result;
     }
+    return result;
 }
 
 function TilemapUnstable(map, key, sprites, w, h){
