@@ -179,6 +179,12 @@ function Text(x, y, size, font, text, color){
     conLog("Text");
 }
 
+function drawText(txt, x, y, s, f, c){
+    ctx.font = s + "px " + f;
+    ctx.fillStyle = c;
+    ctx.fillText(txt, x, y);
+}
+
 function tool(source){
     let src = document.createElement("script");
     src.src = source;
