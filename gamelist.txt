@@ -1,7 +1,0 @@
-LIST OF GAMES MADE WITH INSTANTJS:
-
--Space Shooter (Future Games)
--Flappy Pixel (Future Games)
--Turbo Tube (Future Games)
--Crate Run  (Future Games)
--Assorted test games (Future Games, TOPGames)
