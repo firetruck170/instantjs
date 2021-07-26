@@ -14,6 +14,10 @@ imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
 document.head.appendChild(imported);
 var gameBlocks = [];
 
+function grabAsset(asset){
+    return "https://future-games.site/instant/assets/" + asset + ".png";
+}
+
 window.addEventListener("mousemove", function(e){
     mouseX = e.clientX - parseInt(window.getComputedStyle(c, null).paddingLeft) * scaleX;
     mouseY = e.clientY - parseInt(window.getComputedStyle(c, null).paddingTop) * scaleY;
