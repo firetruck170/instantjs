@@ -10,9 +10,20 @@ var scaleX = 1;
 var scaleY = 1;
 var mousestate = false;
 var unmoving = false;
+var keys = {};
 imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
 document.head.appendChild(imported);
 var gameBlocks = [];
+
+window.addEventListener("keydown", function(e){
+    let ck = e.key;
+    keys[ck] = true;
+});
+
+window.addEventListener("keyup", function(e){
+    let ck = e.key;
+    keys[ck] = false;
+});
 
 function grabAsset(asset){
     return "https://future-games.site/instant/assets/" + asset + ".png";
@@ -226,15 +237,6 @@ function handleInputDown(input, result){
     });
 }
 
-function handleInputTap(input, result){
-    window.addEventListener(`keyup`, function(e){
-        if(e.key.toLowerCase() == input){
-            result();
-            conLog("Key input!");
-        }
-    });
-}
-
 function handleClick(result){
     window.addEventListener(`click`, function(e){
         result();
@@ -351,45 +353,64 @@ function Block(sprite, x, y, w, h){
     		body.x = this.x + this.w;
     		body.onPlat = true;
     		//body.y = this.y + this.h;
+            //alert("case 1!");
     		body.onPlat = true;
     		return true;
     	} else if(this.x + this.w >= body.x && this.x + this.w <= body.x + body.w && this.y >= body.y && this.y <= body.y + body.h){
             //body.x = this.x + this.w;
     		body.onPlat = true;
     		body.y = this.y - body.h;
+            //alert("case 2!");
     		body.onPlat = true;
     		return true;
         } else if(this.x >= body.x && this.x <= body.x + body.w && this.y >= body.y && this.y <= body.y + body.h){
     		//body.x = this.x - (body.w);
     		body.onPlat = true;
     		body.y = this.y - (body.h);
+            //alert("case 3!");
     		return true;
     	} else if(this.x >= body.x && this.x <= body.x + body.w && this.y + this.h >= body.y && this.y + this.h <= body.y + body.h){
             body.x = this.x - (body.w);
     		body.onPlat = true;
     		//body.y = this.y + (this.h);
+            //alert("case 4!");
     		return true;
         } else if(body.x > this.x && body.x + body.w < this.x + this.w && body.y > this.y && body.y + body.h < this.y + this.h){
     	    //body.x = this.x + (this.w);
     		body.onPlat = true;
     		//body.y = this.y - body.h;
+            //alert("case 5!");
     		return true;
     	} else if(body.x< this.x + this.w && body.x + body.w > this.x + this.w && body.y > this.y && body.y + body.h <= this.y + this.h){
-            body.x = this.x - (body.w);
+            body.x = this.x + (this.w);
     		body.onPlat = true;
             //body.y = this.y - body.h;
+            //alert("case 6!");
     		return true;
     	} else if(body.x > this.x && body.x + body.w < this.x + this.w && body.y < this.y && body.y + body.h > this.y){
     		//body.x = this.x - (body.w);
     		body.onPlat = true;
             body.y = this.y - body.h;
+            //alert("case 7!");
     		return true;
     	} else if(this.x < body.x && this.x + this.w > body.x + body.w && this.y + this.h > body.y && this.y + this.h < body.y + body.h){
     	    //body.y = this.y + this.h;
     		body.onPlat = true;
             body.y = this.y + this.h;
+            //alert("case 8!");
     		return true;
-    	} else{
+    	} else if(this.x > body.x && this.x < body.x + body.w && this.y < body.y && this.y + this.h > body.y + body.h){
+            body.onPlat = true;
+            body.x = this.x - body.w;
+            //alert("case 9!");
+            return true;
+        } else if(this.x < body.x && this.x + this.w > body.x && this.y < body.y && this.y + this.h > body.y + body.h){
+            body.onPlat = true;
+            alert("i!");
+            body.x = this.x + this.w;
+            //alert("case 10!");
+            return true;
+        } else{
     	    body.onPlat = false;
     		return false;
     	}
