@@ -11,9 +11,13 @@ var scaleY = 1;
 var mousestate = false;
 var unmoving = false;
 var keys = {};
+var modAllowed = false;
+var modLoaded = false;
 imported.src = "https://unpkg.com/sweetalert/dist/sweetalert.min.js";
 document.head.appendChild(imported);
 var gameBlocks = [];
+var currentScene = 0;
+var framerate = 1000/20;
 
 window.addEventListener("keydown", function(e){
     let ck = e.key;
@@ -29,6 +33,33 @@ function grabAsset(asset){
     return "https://future-games.site/instant/assets/" + asset + ".png";
 }
 
+function setScene(scene){
+    currentScene = scene;
+}
+
+function startGame(){
+    currentScene.loop();
+    callAfter("startGame()", framerate);
+}
+
+function setupMod(name){
+    if(confirm("Allow mod " + name + " to modify game?")){
+        tool("https://future-games.site/instant/setupmod.js");
+        modAllowed = true;
+    }
+}
+
+function loadMods(){
+    tool("modloader.js");
+}
+
+function saveImage(){
+    let link = document.createElement('a');
+    link.setAttribute('download', 'MintyPaper.png');
+    link.setAttribute('href', c.toDataURL("image/png"));
+    link.click();
+}
+
 window.addEventListener("mousemove", function(e){
     mouseX = e.clientX - parseInt(window.getComputedStyle(c, null).paddingLeft) * scaleX;
     mouseY = e.clientY - parseInt(window.getComputedStyle(c, null).paddingTop) * scaleY;
@@ -39,9 +70,9 @@ window.addEventListener("touchmove", function(e){
     mouseY = e.clientY - parseInt(window.getComputedStyle(c, null).paddingTop) * scaleY;
 });
 
-function extend(object, code){
+/*function extend(object, code){
     object.extension = code;
-}
+}*/
 
 function callAfter(call, fps){
     window.setTimeout(call, fps);
@@ -201,9 +232,9 @@ function drawText(txt, x, y, s, f, c){
 }
 
 function tool(source){
-    let src = document.createElement("script");
-    src.src = source;
-    document.head.appendChild(src);
+    let srce = document.createElement("script");
+    srce.src = source;
+    document.head.appendChild(srce);
 }
 
 function scale(x, y){
@@ -280,10 +311,7 @@ function imgDraw(img, x, y, w, h){
 }
 
 function Scene(config){
-    this.config = config;
-    this.init = function(){
-        this.config();
-    }
+    this.loop = config;
     conLog("Scene created!");
 }
 
@@ -406,7 +434,7 @@ function Block(sprite, x, y, w, h){
             return true;
         } else if(this.x < body.x && this.x + this.w > body.x && this.y < body.y && this.y + this.h > body.y + body.h){
             body.onPlat = true;
-            alert("i!");
+            //alert("i!");
             body.x = this.x + this.w;
             //alert("case 10!");
             return true;
@@ -607,6 +635,9 @@ function Character(sprite, x, y, w, h, camx, camy){
         this.sprite = new Image();
     }
     this.sprite.src = sprite;
+    this.extend = function(code){
+        this.extension = code;
+    }
     this.render = function(){
         if(!this.img){
             render(this.sprite, this.x, this.y, this.w, this.h);
